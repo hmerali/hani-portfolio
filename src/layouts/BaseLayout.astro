@@ -2,44 +2,72 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import type { Lang } from '../i18n/content';
 
 export interface Props {
   title: string;
   description: string;
+  /** Page language. */
+  lang?: Lang;
+  /** Path of the same page in the other language (for the toggle + hreflang). */
+  altHref?: string;
   /** Path-relative or absolute OG image. Defaults to the site OG image. */
   image?: string;
 }
 
-const { title, description, image = '/og-image.png' } = Astro.props;
+const { title, description, lang = 'en', altHref, image = '/og-image.png' } = Astro.props;
 
 const siteName = 'Hani Merali';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(image, Astro.site);
-const fullTitle =
-  title === siteName ? title : `${title} · ${siteName}`;
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+
+// hreflang alternates (only meaningful for the home pages that have both).
+const enHref = lang === 'es' ? altHref : Astro.url.pathname;
+const esHref = lang === 'es' ? Astro.url.pathname : altHref;
+const showAlternates = Boolean(altHref);
 ---
 
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang={lang} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Swap no-js -> js before paint so reveal animations are enhancement-only. -->
+    <!-- Set theme + drop no-js before paint (avoids flash of wrong theme). -->
     <script is:inline>
-      document.documentElement.classList.remove('no-js');
+      (() => {
+        const d = document.documentElement;
+        d.classList.remove('no-js');
+        try {
+          const stored = localStorage.getItem('theme');
+          const theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          d.dataset.theme = theme;
+        } catch (e) {
+          d.dataset.theme = 'light';
+        }
+      })();
     </script>
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
-    <meta name="theme-color" content="#38205c" />
-    <meta name="color-scheme" content="light" />
+    {showAlternates && (
+      <>
+        <link rel="alternate" hreflang="en" href={new URL(enHref!, Astro.site)} />
+        <link rel="alternate" hreflang="es" href={new URL(esHref!, Astro.site)} />
+        <link rel="alternate" hreflang="x-default" href={new URL(enHref!, Astro.site)} />
+      </>
+    )}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf7f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15101c" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="author" content="Hani Merali" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
@@ -55,12 +83,12 @@ const fullTitle =
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <a class="skip-link" href="#main">{lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
+    <Header lang={lang} altHref={altHref} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
 
     <!-- Scroll reveal: progressive enhancement, ~0.4KB, respects reduced motion. -->
     <script is:inline>

@@ -23,7 +23,12 @@
   --color-border: #e4dbcf;      /* warm hairline */
   --color-focus: #7c3aed;       /* focus ring — vivid, high-visibility */
 
-  /* On dark (aubergine) surfaces */
+  /* Primary button (theme-aware so contrast holds in both modes) */
+  --color-btn-bg: #5c2e91;
+  --color-btn-fg: #ffffff;
+  --color-btn-bg-hover: #38205c;
+
+  /* On dark (aubergine) surfaces — same in both themes (hero/footer are dark) */
   --color-on-dark: #f7f2fb;
   --color-on-dark-soft: #d9cbe8;
 
@@ -63,6 +68,27 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: light;
+}
+
+/* ---- Dark theme ---------------------------------------------------------
+   Applied when html[data-theme="dark"]. All pairs verified for WCAG AA.
+   purple-deep is intentionally NOT overridden: the hero, footer, and skip
+   link are dark surfaces in both themes. */
+:root[data-theme='dark'] {
+  --color-bg: #15101c;          /* warm near-black plum */
+  --color-bg-alt: #1d1626;      /* alternating band */
+  --color-surface: #241c30;     /* cards */
+  --color-ink: #f4eff8;         /* warm off-white text */
+  --color-ink-soft: #b9aec8;    /* muted text (AA on dark bg) */
+  --color-purple: #c7a8ea;      /* accent text/links — light, AA on dark */
+  --color-border: #352a44;      /* subtle hairline */
+  --color-focus: #b794f6;       /* focus ring on dark */
+
+  --color-btn-bg: #c7a8ea;      /* light purple button */
+  --color-btn-fg: #1a1226;      /* dark text on it */
+  --color-btn-bg-hover: #ddc6f4;
+
+  color-scheme: dark;
 }
 
 /* ---- Reset / base -------------------------------------------------------- */
@@ -199,10 +225,10 @@ strong { font-weight: 650; }
     border-color 0.2s var(--ease), color 0.2s var(--ease);
 }
 .btn--primary {
-  background: var(--color-purple);
-  color: #fff;
+  background: var(--color-btn-bg);
+  color: var(--color-btn-fg);
 }
-.btn--primary:hover { background: var(--color-purple-deep); transform: translateY(-2px); }
+.btn--primary:hover { background: var(--color-btn-bg-hover); transform: translateY(-2px); }
 .btn--ghost {
   background: transparent;
   color: var(--color-purple);
@@ -214,6 +240,12 @@ strong { font-weight: 650; }
   color: var(--color-purple-deep);
 }
 .btn--on-dark:hover { transform: translateY(-2px); background: #fff; }
+
+/* ---- Theme toggle icons (global so they react to data-theme) ------------- */
+.theme-icon-sun { display: none; }
+.theme-icon-moon { display: block; }
+:root[data-theme='dark'] .theme-icon-sun { display: block; }
+:root[data-theme='dark'] .theme-icon-moon { display: none; }
 
 /* ---- Motion: scroll reveal (progressive enhancement) --------------------- */
 [data-reveal] {

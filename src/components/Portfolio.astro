@@ -1,0 +1,320 @@
+---
+import { site } from '../data/site';
+import type { Content, Lang } from '../i18n/content';
+
+export interface Props {
+  lang: Lang;
+  t: Content;
+}
+const { t } = Astro.props;
+
+// Inline icons (no external requests).
+const icons = {
+  mail: 'M3 5.5h18v13H3zM3 6l9 7 9-7',
+  linkedin: 'M4.98 3.5a2 2 0 100 4 2 2 0 000-4zM3.5 9h3v11.5h-3zM9 9h2.85v1.57h.04a3.13 3.13 0 012.82-1.55c3.02 0 3.58 1.99 3.58 4.57v6.91h-3v-6.13c0-1.46-.03-3.34-2.04-3.34-2.04 0-2.35 1.59-2.35 3.24v6.23H9z',
+  github: 'M12 2a10 10 0 00-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 015 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85l-.01 2.74c0 .27.18.58.69.48A10 10 0 0012 2z',
+  doc: 'M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h6',
+  arrow: 'M3 8h9M8 4l4 4-4 4',
+  close: 'M5 5l14 14M19 5L5 19',
+};
+
+const socials = [
+  { key: 'linkedin', label: 'LinkedIn', href: site.links.linkedin },
+  { key: 'github', label: 'GitHub', href: site.links.github },
+  { key: 'doc', label: t.hero.resumeLabel, href: site.links.resume },
+] as const;
+---
+
+<!-- ===== HOME / HERO ===== -->
+<section id="home" class="hero">
+  <div class="container hero__inner">
+    <p class="eyebrow hero__eyebrow" data-reveal>{t.hero.eyebrow}</p>
+    <h1 class="hero__name" data-reveal style="--reveal-delay:80ms">{site.name}</h1>
+    <p class="lead hero__tagline" data-reveal style="--reveal-delay:160ms">{t.hero.tagline}</p>
+
+    <div class="hero__actions" data-reveal style="--reveal-delay:240ms">
+      <a class="btn btn--on-dark" href={site.links.email}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d={icons.mail} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {t.hero.contact}
+      </a>
+
+      <ul class="hero__socials">
+        {socials.map((s) => (
+          <li>
+            <a class="icon-link" href={s.href} aria-label={s.label} target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d={icons[s.key]} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="section">
+  <div class="container about">
+    <header class="section-head" data-reveal>
+      <p class="eyebrow">{t.about.eyebrow}</p>
+      <h2>{t.about.heading}</h2>
+    </header>
+    <div class="about__body measure" data-reveal style="--reveal-delay:80ms">
+      {t.about.paras.map((para) => <p>{para}</p>)}
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section id="projects" class="section section--alt">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="eyebrow">{t.projectsSection.eyebrow}</p>
+      <h2>{t.projectsSection.heading}</h2>
+    </header>
+
+    <div class="pgrid">
+      {t.projects.map((p, i) => (
+        <article class="pcard" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+          <a class="pcard__btn" href={`/projects/${p.slug}`} data-open={`dlg-${p.slug}`}
+            aria-haspopup="dialog" aria-label={`${t.projectsSection.viewDetails}: ${p.title}`}>
+            <span class="pcard__context">{p.context}</span>
+            <span class="pcard__title">{p.title}</span>
+            <span class="pcard__tagline">{p.tagline}</span>
+            <span class="pcard__tags">
+              {p.tags.slice(0, 4).map((tag) => <span class="chip">{tag}</span>)}
+            </span>
+            <span class="pcard__cta">
+              {t.projectsSection.viewDetails}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d={icons.arrow} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Project detail dialogs -->
+{t.projects.map((p) => (
+  <dialog id={`dlg-${p.slug}`} class="pdialog" aria-labelledby={`dlg-${p.slug}-title`}>
+    <div class="pdialog__inner">
+      <form method="dialog" class="pdialog__close-form">
+        <button class="pdialog__close" aria-label={t.projectsSection.close} value="close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d={icons.close} stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+      <p class="pdialog__context">{p.context}</p>
+      <h3 class="pdialog__title" id={`dlg-${p.slug}-title`}>{p.title}</h3>
+      <p class="pdialog__tagline">{p.tagline}</p>
+
+      <h4 class="pdialog__label">{t.projectsSection.skillsLabel}</h4>
+      <div class="pdialog__tags">
+        {p.tags.map((tag) => <span class="chip">{tag}</span>)}
+      </div>
+
+      <h4 class="pdialog__label">{t.projectsSection.aboutLabel}</h4>
+      {p.sections.map((s) => (
+        <div class="pdialog__section">
+          <h5>{s.heading}</h5>
+          {s.body.map((para) => <p>{para}</p>)}
+          {s.bullets && <ul>{s.bullets.map((b) => <li>{b}</li>)}</ul>}
+        </div>
+      ))}
+    </div>
+  </dialog>
+))}
+
+<!-- ===== EXPERIENCE ===== -->
+<section id="experience" class="section">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="eyebrow">{t.experienceSection.eyebrow}</p>
+      <h2>{t.experienceSection.heading}</h2>
+    </header>
+    <ol class="timeline">
+      {t.experience.map((job, i) => (
+        <li class="timeline__item" data-reveal style={`--reveal-delay:${i * 60}ms`}>
+          <div class="timeline__period">
+            {job.period && <span>{job.period}</span>}
+            {job.current && <span class="badge">{t.experienceSection.current}</span>}
+          </div>
+          <div class="timeline__body">
+            <h3>{job.title} <span class="timeline__org">· {job.org}</span></h3>
+            {job.location && <p class="timeline__loc">{job.location}</p>}
+            {job.description && <p class="timeline__desc">{job.description}</p>}
+            {job.stack.length > 0 && (
+              <div class="chips" aria-label="Technologies used">
+                {job.stack.map((s) => <span class="chip">{s}</span>)}
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="section section--alt">
+  <div class="container contact">
+    <header class="section-head" data-reveal>
+      <p class="eyebrow">{t.contact.eyebrow}</p>
+      <h2>{t.contact.heading}</h2>
+    </header>
+    <div class="contact__body" data-reveal style="--reveal-delay:80ms">
+      <p class="lead measure">{t.contact.lead}</p>
+      <a class="btn btn--primary contact__email" href={site.links.email}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d={icons.mail} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {site.email}
+      </a>
+      <ul class="contact__socials">
+        {socials.map((s) => (
+          <li>
+            <a class="contact__social" href={s.href} target="_blank" rel="noopener">
+              <span class="icon-link" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d={icons[s.key]} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              {s.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Modal open/close (progressive enhancement). showModal() handles focus
+     trap + Escape natively; backdrop click closes. -->
+<script is:inline>
+  (() => {
+    document.querySelectorAll('[data-open]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const dlg = document.getElementById(btn.getAttribute('data-open'));
+        if (dlg && typeof dlg.showModal === 'function') {
+          e.preventDefault();
+          dlg.showModal();
+        }
+      });
+    });
+    document.querySelectorAll('dialog.pdialog').forEach((dlg) => {
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) dlg.close();
+      });
+    });
+  })();
+</script>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(120% 120% at 0% 0%, #4a2570 0%, transparent 55%),
+      linear-gradient(160deg, #38205c 0%, #25143b 100%);
+    color: var(--color-on-dark);
+    padding-block: clamp(4rem, 14vh, 8.5rem);
+  }
+  .hero__inner { max-width: 52rem; }
+  .hero__eyebrow { color: var(--color-purple-bright); }
+  .hero__name { color: var(--color-on-dark); font-size: var(--fs-display); margin-top: 0.5rem; font-weight: 560; }
+  .hero__tagline { color: var(--color-on-dark-soft); margin-top: 1.1rem; }
+  .hero__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.25rem; margin-top: 2.2rem; }
+  .hero__socials { display: flex; gap: 0.6rem; list-style: none; padding: 0; margin: 0; }
+  .icon-link {
+    display: grid; place-items: center; width: 2.85rem; height: 2.85rem; border-radius: 50%;
+    color: var(--color-on-dark);
+    border: 1.5px solid color-mix(in srgb, var(--color-on-dark) 35%, transparent);
+    transition: transform 0.2s var(--ease), background-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .icon-link:hover { transform: translateY(-2px); background: var(--color-on-dark); color: var(--color-purple-deep); }
+
+  .section-head { max-width: 42rem; margin-bottom: var(--space-6); }
+  .section-head h2 { font-size: var(--fs-h2); margin-top: 0.4rem; }
+
+  .about__body p { margin-top: 1rem; }
+  .about__body p:first-child { margin-top: 0; }
+
+  .pgrid { display: grid; gap: clamp(1rem, 2.5vw, 1.6rem); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .pgrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .pgrid { grid-template-columns: repeat(3, 1fr); } }
+
+  .pcard { height: 100%; }
+  .pcard__btn {
+    display: flex; flex-direction: column; gap: 0.55rem; align-items: flex-start; text-align: left;
+    width: 100%; height: 100%; padding: clamp(1.4rem, 3vw, 1.9rem);
+    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); cursor: pointer; font: inherit; color: var(--color-ink); text-decoration: none;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .pcard__btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--color-purple) 35%, var(--color-border)); }
+  .pcard__context { font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-purple); }
+  .pcard__title { font-family: var(--font-serif); font-size: var(--fs-h3); line-height: 1.1; }
+  .pcard__tagline { color: var(--color-ink-soft); flex-grow: 1; }
+  .pcard__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.2rem; }
+  .pcard__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 650; color: var(--color-purple); margin-top: 0.4rem; }
+  .pcard__btn:hover .pcard__cta svg { transform: translateX(3px); }
+  .pcard__cta svg { transition: transform 0.25s var(--ease); }
+
+  .chip {
+    font-size: 0.8rem; font-weight: 500; padding: 0.28rem 0.6rem; border-radius: 999px;
+    background: var(--color-bg-alt); color: var(--color-ink-soft); border: 1px solid var(--color-border);
+  }
+  .section--alt .chip { background: var(--color-surface); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.9rem; }
+
+  .pdialog {
+    width: min(40rem, calc(100vw - 2rem)); max-height: min(85vh, 48rem); padding: 0;
+    border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-md);
+    background: var(--color-bg); color: var(--color-ink);
+  }
+  .pdialog::backdrop { background: rgba(10, 6, 16, 0.6); backdrop-filter: blur(2px); }
+  .pdialog__inner { padding: clamp(1.5rem, 4vw, 2.5rem); position: relative; }
+  .pdialog__close-form { position: sticky; top: 0; float: right; margin: 0; }
+  .pdialog__close {
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%;
+    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-ink); cursor: pointer;
+  }
+  .pdialog__close:hover { background: var(--color-bg-alt); color: var(--color-purple); }
+  .pdialog__context { font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-purple); }
+  .pdialog__title { font-size: var(--fs-h2); margin: 0.3rem 0 0.5rem; }
+  .pdialog__tagline { color: var(--color-ink-soft); }
+  .pdialog__label {
+    font-family: var(--font-sans); font-size: var(--fs-small); text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-purple); margin-top: 1.6rem; margin-bottom: 0.6rem;
+  }
+  .pdialog__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .pdialog__section { margin-top: 1.1rem; }
+  .pdialog__section h5 { font-family: var(--font-serif); font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .pdialog__section p { margin-top: 0.5rem; }
+  .pdialog__section ul { margin-top: 0.6rem; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-6); }
+  .timeline__item { display: grid; gap: 0.4rem 2rem; padding-bottom: var(--space-6); border-bottom: 1px solid var(--color-border); }
+  .timeline__item:last-child { border-bottom: 0; padding-bottom: 0; }
+  .timeline__period { font-weight: 600; color: var(--color-ink-soft); display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; min-height: 1.5rem; }
+  .badge {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+    color: var(--color-btn-fg); background: var(--color-btn-bg); padding: 0.18rem 0.5rem; border-radius: 999px;
+  }
+  .timeline__body h3 { font-size: var(--fs-h3); }
+  .timeline__org { color: var(--color-ink-soft); font-weight: 500; }
+  .timeline__loc { color: var(--color-ink-soft); font-size: var(--fs-small); margin-top: 0.15rem; }
+  .timeline__desc { margin-top: 0.7rem; max-width: 46rem; }
+  @media (min-width: 48rem) { .timeline__item { grid-template-columns: 11rem 1fr; } }
+
+  .contact__email { margin-top: 1.4rem; word-break: break-word; }
+  .contact__socials { list-style: none; padding: 0; margin: 1.6rem 0 0; display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .contact__social { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--color-ink); font-weight: 600; }
+  .contact__social .icon-link { width: 2.5rem; height: 2.5rem; color: var(--color-purple); border-color: var(--color-border); }
+  .contact__social:hover .icon-link { background: var(--color-btn-bg); color: var(--color-btn-fg); border-color: var(--color-btn-bg); }
+</style>

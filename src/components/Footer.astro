@@ -1,8 +1,15 @@
 ---
+import { getContent, type Lang } from '../i18n/content';
+
+export interface Props {
+  lang?: Lang;
+}
+const { lang = 'en' } = Astro.props;
+const t = getContent(lang);
 const year = new Date().getFullYear();
 
 const socials = [
-  { href: 'mailto:hanimerali@gmail.com', label: 'Email', text: 'hanimerali@gmail.com' },
+  { href: 'mailto:hanimerali@gmail.com', label: t.footer.email, text: 'hanimerali@gmail.com' },
   { href: 'https://linkedin.com/in/hmerali', label: 'LinkedIn', text: 'linkedin.com/in/hmerali' },
   { href: 'https://github.com/hmerali', label: 'GitHub', text: 'github.com/hmerali' },
 ];
@@ -12,9 +19,7 @@ const socials = [
   <div class="container site-footer__inner">
     <div class="site-footer__brand">
       <span class="site-footer__name">Hani Merali</span>
-      <p class="site-footer__tag">
-        Building data and technology for civic and human good.
-      </p>
+      <p class="site-footer__tag">{t.footer.tagline}</p>
     </div>
 
     <nav class="site-footer__links" aria-label="Contact and social">
@@ -39,7 +44,7 @@ const socials = [
   </div>
 
   <div class="container site-footer__base">
-    <p>&copy; {year} Hani Merali. Built with Astro.</p>
+    <p>&copy; {year} Hani Merali. {t.footer.built}</p>
   </div>
 </footer>
 

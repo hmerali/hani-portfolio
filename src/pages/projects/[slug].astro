@@ -1,9 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { projects } from '../../data/projects';
+import { getContent } from '../../i18n/content';
+
+const projects = getContent('en').projects;
 
 export function getStaticPaths() {
-  return projects.map((project, index) => ({
+  const all = getContent('en').projects;
+  return all.map((project, index) => ({
     params: { slug: project.slug },
     props: { project, index },
   }));
@@ -16,7 +19,7 @@ const prev = index > 0 ? projects[index - 1] : null;
 const next = index < projects.length - 1 ? projects[index + 1] : null;
 ---
 
-<BaseLayout title={project.title} description={project.summary}>
+<BaseLayout title={project.title} description={project.summary} lang="en">
   <article>
     <header class="case-hero">
       <div class="container case-hero__inner">
@@ -112,7 +115,7 @@ const next = index < projects.length - 1 ? projects[index + 1] : null;
   .case-section:last-child { margin-bottom: 0; }
   .case-section h2 {
     font-size: var(--fs-h3);
-    color: var(--color-purple-deep);
+    color: var(--color-purple);
     margin-bottom: 0.8rem;
   }
   .case-section p { margin-top: 0.9rem; }

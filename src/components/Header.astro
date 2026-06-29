@@ -1,49 +1,98 @@
 ---
-// Single-page anchor nav. Links use absolute /#id so they also work from the
-// project case-study pages (jump back to home, then scroll).
+import { getContent, type Lang } from '../i18n/content';
+
+export interface Props {
+  lang: Lang;
+  altHref?: string;
+}
+const { lang, altHref = lang === 'es' ? '/' : '/es/' } = Astro.props;
+const t = getContent(lang);
+const home = lang === 'es' ? '/es/' : '/';
+
 const links = [
-  { href: '/#about', label: 'About', id: 'about' },
-  { href: '/#projects', label: 'Projects', id: 'projects' },
-  { href: '/#experience', label: 'Experience', id: 'experience' },
-  { href: '/#contact', label: 'Contact', id: 'contact' },
+  { href: `${home}#about`, label: t.nav.about, id: 'about' },
+  { href: `${home}#projects`, label: t.nav.projects, id: 'projects' },
+  { href: `${home}#experience`, label: t.nav.experience, id: 'experience' },
+  { href: `${home}#contact`, label: t.nav.contact, id: 'contact' },
 ];
+
+const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
 ---
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href="/#home" aria-label="Hani Merali — top of page">
+    <a class="brand" href={`${home}#home`} aria-label="Hani Merali — top of page">
       <span class="brand__name">Hani Merali</span>
     </a>
 
-    <details class="nav" id="site-nav">
-      <summary class="nav__toggle" aria-label="Toggle navigation menu">
-        <span class="nav__toggle-bars" aria-hidden="true"></span>
-        <span class="nav__toggle-label">Menu</span>
-      </summary>
-      <nav class="nav__menu" aria-label="Primary">
-        <ul>
-          {
-            links.map((link) => (
+    <div class="header-right">
+      <div class="header-tools">
+        <button
+          class="tool-btn"
+          id="theme-toggle"
+          type="button"
+          aria-label={t.toggles.toDark}
+          aria-pressed="false"
+          data-label-dark={t.toggles.toDark}
+          data-label-light={t.toggles.toLight}
+        >
+          <svg class="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <a class="tool-btn tool-btn--lang" href={altHref} aria-label={langAriaLabel} hreflang={lang === 'es' ? 'en' : 'es'}>
+          {t.toggles.langShort}
+        </a>
+      </div>
+
+      <details class="nav" id="site-nav">
+        <summary class="nav__toggle" aria-label="Menu">
+          <span class="nav__toggle-bars" aria-hidden="true"></span>
+          <span class="nav__toggle-label">{t.nav.about === 'About' ? 'Menu' : 'Menú'}</span>
+        </summary>
+        <nav class="nav__menu" aria-label={t.nav.projects}>
+          <ul>
+            {links.map((link) => (
               <li>
-                <a href={link.href} class="nav__link" data-nav={link.id}>
-                  {link.label}
-                </a>
+                <a href={link.href} class="nav__link" data-nav={link.id}>{link.label}</a>
               </li>
-            ))
-          }
-          <li>
-            <a class="nav__link nav__link--cta" href="/resume.pdf" target="_blank" rel="noopener">
-              Résumé
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </details>
+            ))}
+            <li>
+              <a class="nav__link nav__link--cta" href="/resume.pdf" target="_blank" rel="noopener">
+                {t.nav.resume}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 
 <script is:inline>
   (() => {
+    // Theme toggle
+    const tt = document.getElementById('theme-toggle');
+    if (tt) {
+      const sync = (theme) => {
+        tt.setAttribute('aria-pressed', String(theme === 'dark'));
+        tt.setAttribute('aria-label', theme === 'dark' ? tt.dataset.labelLight : tt.dataset.labelDark);
+      };
+      sync(document.documentElement.dataset.theme || 'light');
+      tt.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync(next);
+      });
+    }
+
+    // Mobile menu close behaviour
     const nav = document.getElementById('site-nav');
     if (nav) {
       nav.querySelectorAll('a').forEach((a) =>
@@ -57,7 +106,7 @@ const links = [
       });
     }
 
-    // Highlight the nav link for the section currently in view.
+    // Active-section highlight
     const navLinks = document.querySelectorAll('.nav__link[data-nav]');
     const byId = {};
     navLinks.forEach((l) => (byId[l.getAttribute('data-nav')] = l));
@@ -69,12 +118,8 @@ const links = [
         (entries) => {
           entries.forEach((entry) => {
             const link = byId[entry.target.id];
-            if (!link) return;
-            if (entry.isIntersecting) {
-              navLinks.forEach((l) => {
-                l.classList.remove('is-active');
-                l.removeAttribute('aria-current');
-              });
+            if (link && entry.isIntersecting) {
+              navLinks.forEach((l) => { l.classList.remove('is-active'); l.removeAttribute('aria-current'); });
               link.classList.add('is-active');
               link.setAttribute('aria-current', 'true');
             }
@@ -101,6 +146,7 @@ const links = [
     align-items: center;
     justify-content: space-between;
     min-height: 4.25rem;
+    gap: 1rem;
   }
   .brand {
     text-decoration: none;
@@ -112,30 +158,40 @@ const links = [
   }
   .brand:hover { color: var(--color-purple); }
 
-  .nav { position: relative; }
-  .nav__toggle {
+  .header-right { display: flex; align-items: center; gap: 0.6rem; }
+  .header-tools { display: flex; align-items: center; gap: 0.4rem; }
+
+  .tool-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    list-style: none;
-    cursor: pointer;
-    padding: 0.5rem 0.85rem;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.6rem;
     border-radius: 999px;
     border: 1.5px solid var(--color-border);
-    font-weight: 600;
+    background: transparent;
     color: var(--color-ink);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 650;
+    font-size: 0.85rem;
+    text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .tool-btn:hover { border-color: var(--color-purple); color: var(--color-purple); }
+  .tool-btn--lang { letter-spacing: 0.04em; }
+
+  .nav { position: relative; }
+  .nav__toggle {
+    display: inline-flex; align-items: center; gap: 0.55rem; list-style: none; cursor: pointer;
+    padding: 0.5rem 0.85rem; border-radius: 999px; border: 1.5px solid var(--color-border);
+    font-weight: 600; color: var(--color-ink); -webkit-tap-highlight-color: transparent;
   }
   .nav__toggle::-webkit-details-marker { display: none; }
-  .nav__toggle-bars,
-  .nav__toggle-bars::before,
-  .nav__toggle-bars::after {
-    content: '';
-    display: block;
-    width: 18px;
-    height: 2px;
-    background: var(--color-ink);
-    border-radius: 2px;
+  .nav__toggle-bars, .nav__toggle-bars::before, .nav__toggle-bars::after {
+    content: ''; display: block; width: 18px; height: 2px; background: var(--color-ink); border-radius: 2px;
     transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
   }
   .nav__toggle-bars { position: relative; }
@@ -146,28 +202,16 @@ const links = [
   .nav[open] .nav__toggle-bars::after { transform: translateY(-6px) rotate(-45deg); }
 
   .nav__menu ul { list-style: none; margin: 0; padding: 0; }
-  .nav__link {
-    display: block;
-    text-decoration: none;
-    color: var(--color-ink);
-    font-weight: 500;
-    padding: 0.5rem 0;
-  }
+  .nav__link { display: block; text-decoration: none; color: var(--color-ink); font-weight: 500; padding: 0.5rem 0; }
   .nav__link.is-active { color: var(--color-purple); font-weight: 650; }
   .nav__link:hover { color: var(--color-purple); }
   .nav__link--cta { color: var(--color-purple); font-weight: 650; }
 
   @media (max-width: 47.99rem) {
     .nav__menu {
-      position: absolute;
-      right: 0;
-      top: calc(100% + 0.6rem);
-      min-width: 12rem;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-md);
-      padding: 0.5rem 1rem;
+      position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 12rem;
+      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius);
+      box-shadow: var(--shadow-md); padding: 0.5rem 1rem;
     }
     .nav__link { padding: 0.7rem 0; border-bottom: 1px solid var(--color-border); }
     .nav__menu li:last-child .nav__link { border-bottom: 0; }
@@ -176,15 +220,10 @@ const links = [
   @media (min-width: 48rem) {
     .nav__toggle { display: none; }
     .nav__menu { display: block !important; }
-    .nav__menu ul {
-      display: flex;
-      align-items: center;
-      gap: clamp(1.25rem, 2.5vw, 2.25rem);
-    }
+    .nav__menu ul { display: flex; align-items: center; gap: clamp(1rem, 2vw, 1.9rem); }
     .nav__link--cta {
       border: 1.5px solid color-mix(in srgb, var(--color-purple) 40%, transparent);
-      border-radius: 999px;
-      padding: 0.45rem 1rem;
+      border-radius: 999px; padding: 0.45rem 1rem;
     }
     .nav__link--cta:hover { border-color: var(--color-purple); }
   }
