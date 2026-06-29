@@ -11,7 +11,10 @@ export default defineConfig({
   site: 'https://hani-portfolio.vercel.app',
   output: 'static',
   build: {
-    inlineStylesheets: 'auto',
+    // Inline all CSS into each page's <head> so there is no render-blocking
+    // stylesheet request. The site's CSS is small; fonts still load async via
+    // font-display: swap. This removes the last render-blocking resource.
+    inlineStylesheets: 'always',
   },
   prefetch: {
     prefetchAll: true,
