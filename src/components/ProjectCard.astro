@@ -4,14 +4,17 @@ import type { Project } from '../data/projects';
 export interface Props {
   project: Project;
   index?: number;
+  /** Heading level for the card title, so the surrounding outline stays valid. */
+  headingLevel?: 2 | 3;
 }
-const { project, index = 0 } = Astro.props;
+const { project, index = 0, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
 <article class="card" data-reveal style={`--reveal-delay:${index * 90}ms`}>
   <a class="card__link" href={`/projects/${project.slug}`} aria-labelledby={`p-${project.slug}`}>
     <p class="card__context">{project.context}</p>
-    <h3 class="card__title" id={`p-${project.slug}`}>{project.title}</h3>
+    <Heading class="card__title" id={`p-${project.slug}`}>{project.title}</Heading>
     <p class="card__tagline">{project.tagline}</p>
     <ul class="card__tags" aria-label="Technologies">
       {project.tags.slice(0, 4).map((t) => <li>{t}</li>)}
