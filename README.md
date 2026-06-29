@@ -42,6 +42,9 @@ content — no markup changes needed.
 
 ## Deploying to Vercel
 
+This repository is connected to a Vercel project, so **every push to `main`
+deploys automatically** — no manual step needed.
+
 This is a static Astro site and is auto-detected by Vercel.
 
 1. Push this folder to a Git repository (GitHub/GitLab/Bitbucket).
