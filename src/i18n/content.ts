@@ -67,7 +67,7 @@ const en: Content = {
     description:
       'Hani Merali — software engineer and computer science student at UT Austin, working across accessibility, AI for healthcare, and civic data.',
   },
-  nav: { about: 'About', projects: 'Projects', experience: 'Experience', contact: 'Contact', resume: 'Resume' },
+  nav: { about: 'About me', projects: 'Projects', experience: 'Experience', contact: 'Contact me', resume: 'Resume' },
   toggles: {
     toLight: 'Switch to light mode',
     toDark: 'Switch to dark mode',
@@ -290,7 +290,7 @@ const es: Content = {
     description:
       'Hani Merali — ingeniero de software y estudiante de ciencias de la computación en UT Austin, enfocado en accesibilidad, IA para la salud y datos cívicos.',
   },
-  nav: { about: 'Sobre mí', projects: 'Proyectos', experience: 'Experiencia', contact: 'Contacto', resume: 'Currículum' },
+  nav: { about: 'Sobre mí', projects: 'Proyectos', experience: 'Experiencia', contact: 'Contáctame', resume: 'Currículum' },
   toggles: {
     toLight: 'Cambiar a modo claro',
     toDark: 'Cambiar a modo oscuro',

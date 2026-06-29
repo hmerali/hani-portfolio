@@ -21,55 +21,43 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href={`${home}#home`} aria-label="Hani Merali — top of page">
-      <span class="brand__name">Hani Merali</span>
-    </a>
+    <nav class="mainnav" aria-label="Primary">
+      <ul>
+        {links.map((link) => (
+          <li>
+            <a href={link.href} class="navpill" data-nav={link.id}>{link.label}</a>
+          </li>
+        ))}
+        <li>
+          <a class="navpill navpill--cta" href="/resume.pdf" target="_blank" rel="noopener">
+            {t.nav.resume}
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-    <div class="header-right">
-      <div class="header-tools">
-        <button
-          class="tool-btn"
-          id="theme-toggle"
-          type="button"
-          aria-label={t.toggles.toDark}
-          aria-pressed="false"
-          data-label-dark={t.toggles.toDark}
-          data-label-light={t.toggles.toLight}
-        >
-          <svg class="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </button>
+    <div class="header-tools">
+      <button
+        class="tool-btn"
+        id="theme-toggle"
+        type="button"
+        aria-label={t.toggles.toDark}
+        aria-pressed="false"
+        data-label-dark={t.toggles.toDark}
+        data-label-light={t.toggles.toLight}
+      >
+        <svg class="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
 
-        <a class="tool-btn tool-btn--lang" href={altHref} aria-label={langAriaLabel} hreflang={lang === 'es' ? 'en' : 'es'}>
-          {t.toggles.langShort}
-        </a>
-      </div>
-
-      <details class="nav" id="site-nav">
-        <summary class="nav__toggle" aria-label="Menu">
-          <span class="nav__toggle-bars" aria-hidden="true"></span>
-          <span class="nav__toggle-label">{t.nav.about === 'About' ? 'Menu' : 'Menú'}</span>
-        </summary>
-        <nav class="nav__menu" aria-label={t.nav.projects}>
-          <ul>
-            {links.map((link) => (
-              <li>
-                <a href={link.href} class="nav__link" data-nav={link.id}>{link.label}</a>
-              </li>
-            ))}
-            <li>
-              <a class="nav__link nav__link--cta" href="/resume.pdf" target="_blank" rel="noopener">
-                {t.nav.resume}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </details>
+      <a class="tool-btn tool-btn--lang" href={altHref} aria-label={langAriaLabel} hreflang={lang === 'es' ? 'en' : 'es'}>
+        {t.toggles.langShort}
+      </a>
     </div>
   </div>
 </header>
@@ -92,22 +80,8 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
       });
     }
 
-    // Mobile menu close behaviour
-    const nav = document.getElementById('site-nav');
-    if (nav) {
-      nav.querySelectorAll('a').forEach((a) =>
-        a.addEventListener('click', () => nav.removeAttribute('open'))
-      );
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && nav.hasAttribute('open')) {
-          nav.removeAttribute('open');
-          nav.querySelector('summary')?.focus();
-        }
-      });
-    }
-
     // Active-section highlight
-    const navLinks = document.querySelectorAll('.nav__link[data-nav]');
+    const navLinks = document.querySelectorAll('.navpill[data-nav]');
     const byId = {};
     navLinks.forEach((l) => (byId[l.getAttribute('data-nav')] = l));
     const sections = ['about', 'projects', 'experience', 'contact']
@@ -137,7 +111,7 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
     backdrop-filter: saturate(180%) blur(10px);
     border-bottom: 1px solid var(--color-border);
   }
@@ -145,22 +119,51 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.75rem 1rem;
+    flex-wrap: wrap;
+    padding-block: 0.6rem;
     min-height: 4.25rem;
-    gap: 1rem;
   }
-  .brand {
+
+  /* Section nav as pill buttons */
+  .mainnav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .navpill {
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
     color: var(--color-ink);
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
   }
-  .brand:hover { color: var(--color-purple); }
+  .navpill:hover {
+    color: var(--color-purple);
+    background: color-mix(in srgb, var(--color-purple) 10%, transparent);
+  }
+  .navpill.is-active {
+    color: var(--color-purple);
+    background: color-mix(in srgb, var(--color-purple) 14%, transparent);
+  }
+  .navpill--cta {
+    color: var(--color-purple);
+    border-color: color-mix(in srgb, var(--color-purple) 40%, transparent);
+  }
+  .navpill--cta:hover { border-color: var(--color-purple); background: transparent; }
 
-  .header-right { display: flex; align-items: center; gap: 0.6rem; }
   .header-tools { display: flex; align-items: center; gap: 0.4rem; }
-
   .tool-btn {
     display: inline-flex;
     align-items: center;
@@ -178,53 +181,28 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
     font-size: 0.85rem;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
-    transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background-color 0.2s var(--ease);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
   .tool-btn:hover { border-color: var(--color-purple); color: var(--color-purple); }
   .tool-btn--lang { letter-spacing: 0.04em; }
 
-  .nav { position: relative; }
-  .nav__toggle {
-    display: inline-flex; align-items: center; gap: 0.55rem; list-style: none; cursor: pointer;
-    padding: 0.5rem 0.85rem; border-radius: 999px; border: 1.5px solid var(--color-border);
-    font-weight: 600; color: var(--color-ink); -webkit-tap-highlight-color: transparent;
-  }
-  .nav__toggle::-webkit-details-marker { display: none; }
-  .nav__toggle-bars, .nav__toggle-bars::before, .nav__toggle-bars::after {
-    content: ''; display: block; width: 18px; height: 2px; background: var(--color-ink); border-radius: 2px;
-    transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
-  }
-  .nav__toggle-bars { position: relative; }
-  .nav__toggle-bars::before { position: absolute; top: -6px; }
-  .nav__toggle-bars::after { position: absolute; top: 6px; }
-  .nav[open] .nav__toggle-bars { background: transparent; }
-  .nav[open] .nav__toggle-bars::before { transform: translateY(6px) rotate(45deg); }
-  .nav[open] .nav__toggle-bars::after { transform: translateY(-6px) rotate(-45deg); }
-
-  .nav__menu ul { list-style: none; margin: 0; padding: 0; }
-  .nav__link { display: block; text-decoration: none; color: var(--color-ink); font-weight: 500; padding: 0.5rem 0; }
-  .nav__link.is-active { color: var(--color-purple); font-weight: 650; }
-  .nav__link:hover { color: var(--color-purple); }
-  .nav__link--cta { color: var(--color-purple); font-weight: 650; }
-
+  /* Mobile: keep the header to a single row. The pill nav becomes a
+     horizontally scrollable strip; the theme/language tools stay pinned. */
   @media (max-width: 47.99rem) {
-    .nav__menu {
-      position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 12rem;
-      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius);
-      box-shadow: var(--shadow-md); padding: 0.5rem 1rem;
+    .site-header__inner { flex-wrap: nowrap; gap: 0.5rem; }
+    .mainnav { min-width: 0; flex: 1 1 auto; }
+    .mainnav ul {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      /* Fade hint that there's more to scroll */
+      -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
+      mask-image: linear-gradient(90deg, #000 92%, transparent);
     }
-    .nav__link { padding: 0.7rem 0; border-bottom: 1px solid var(--color-border); }
-    .nav__menu li:last-child .nav__link { border-bottom: 0; }
-  }
-
-  @media (min-width: 48rem) {
-    .nav__toggle { display: none; }
-    .nav__menu { display: block !important; }
-    .nav__menu ul { display: flex; align-items: center; gap: clamp(1rem, 2vw, 1.9rem); }
-    .nav__link--cta {
-      border: 1.5px solid color-mix(in srgb, var(--color-purple) 40%, transparent);
-      border-radius: 999px; padding: 0.45rem 1rem;
-    }
-    .nav__link--cta:hover { border-color: var(--color-purple); }
+    .mainnav ul::-webkit-scrollbar { display: none; }
+    .navpill { flex: 0 0 auto; font-size: 0.9rem; padding: 0.5rem 0.75rem; }
+    .header-tools { flex-shrink: 0; }
   }
 </style>
