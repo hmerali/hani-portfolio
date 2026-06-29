@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 // Static output: every page is pre-rendered to HTML with zero client JS by
 // default. This is the single biggest lever for a perfect Lighthouse score and
@@ -16,4 +17,5 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: 'hover',
   },
+  integrations: [sitemap()],
 });

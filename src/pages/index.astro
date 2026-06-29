@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site } from '../data/site';
+import { projects } from '../data/projects';
+import { experience } from '../data/experience';
+---
+
+<BaseLayout title={site.name} description={site.intro}>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <p class="eyebrow hero__eyebrow" data-reveal>{site.role}</p>
+      <h1 class="hero__title" data-reveal style="--reveal-delay:80ms">
+        {site.tagline}
+      </h1>
+      <p class="lead hero__intro" data-reveal style="--reveal-delay:160ms">
+        {site.intro}
+      </p>
+      <div class="hero__actions" data-reveal style="--reveal-delay:240ms">
+        <a class="btn btn--on-dark" href="/projects">View my work</a>
+        <a class="btn btn--ghost-light" href="/contact">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured work -->
+  <section class="section">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Selected work</p>
+        <h2>Projects at the intersection of data, accessibility, and impact.</h2>
+      </header>
+      <div class="card-grid">
+        {projects.map((p, i) => <ProjectCard project={p} index={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact highlight -->
+  <section class="section section--alt">
+    <div class="container impact">
+      <div class="impact__text" data-reveal>
+        <p class="eyebrow">Impact</p>
+        <h2>Most recently, civic housing analytics at the Child Poverty Action Lab.</h2>
+        <p class="lead">
+          I built an interactive housing analytics platform that helps nonprofits and
+          legal aid organizations identify high-risk communities — turning research
+          that once took hours into minutes.
+        </p>
+        <a class="btn btn--primary" href="/about">Read my story</a>
+      </div>
+      <dl class="impact__stats" data-reveal style="--reveal-delay:120ms">
+        <div><dt>50+</dt><dd>ZIP codes mapped</dd></div>
+        <div><dt>200+</dt><dd>school campuses analyzed</dd></div>
+        <div><dt>20+</dt><dd>nonverbal users reached via AAC tools</dd></div>
+        <div><dt>4.0</dt><dd>GPA, CS @ UT Austin</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="section closing">
+    <div class="container closing__inner" data-reveal>
+      <h2>Let’s build something that matters.</h2>
+      <p class="lead">
+        I’m always glad to talk about civic tech, accessibility, and data for good.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="/contact">Contact me</a>
+        <a class="btn btn--ghost" href={site.links.resume} target="_blank" rel="noopener">
+          Download résumé
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(120% 120% at 0% 0%, #4a2570 0%, transparent 55%),
+      linear-gradient(160deg, #38205c 0%, #25143b 100%);
+    color: var(--color-on-dark);
+    padding-block: clamp(4rem, 12vh, 8rem);
+  }
+  .hero__inner { max-width: 52rem; }
+  .hero__eyebrow { color: var(--color-purple-bright); }
+  .hero__title {
+    color: var(--color-on-dark);
+    font-size: var(--fs-display);
+    margin-top: 0.6rem;
+    font-weight: 560;
+  }
+  .hero__intro { color: var(--color-on-dark-soft); margin-top: 1.4rem; }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 2rem;
+  }
+  .btn--ghost-light {
+    background: transparent;
+    color: var(--color-on-dark);
+    border-color: color-mix(in srgb, var(--color-on-dark) 45%, transparent);
+  }
+  .btn--ghost-light:hover {
+    border-color: var(--color-on-dark);
+    transform: translateY(-2px);
+  }
+
+  .section-head { max-width: 40rem; margin-bottom: var(--space-6); }
+  .section-head h2 { font-size: var(--fs-h2); margin-top: 0.4rem; }
+
+  .card-grid {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .card-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .card-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .impact {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+  .impact__text h2 { font-size: var(--fs-h2); margin: 0.4rem 0 1rem; }
+  .impact__text .btn { margin-top: 1.5rem; }
+  .impact__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    margin: 0;
+  }
+  .impact__stats dt {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    font-weight: 600;
+    color: var(--color-purple);
+    line-height: 1;
+  }
+  .impact__stats dd { margin: 0.3rem 0 0; color: var(--color-ink-soft); }
+  @media (min-width: 56rem) {
+    .impact { grid-template-columns: 1.1fr 0.9fr; }
+  }
+
+  .closing__inner { max-width: 40rem; text-align: center; margin-inline: auto; }
+  .closing__inner h2 { font-size: var(--fs-h2); }
+  .closing__inner .lead { margin: 1rem 0 0; }
+  .closing .hero__actions { justify-content: center; }
+</style>

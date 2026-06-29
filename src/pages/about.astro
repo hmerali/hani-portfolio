@@ -1,0 +1,230 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import headshot from '../assets/hani-headshot.jpeg';
+import { site, skills, education } from '../data/site';
+import { experience } from '../data/experience';
+
+const description =
+  'Hani Merali — software engineer and CS student at UT Austin, working across civic data analytics and accessibility engineering.';
+---
+
+<BaseLayout title="About" description={description}>
+  <section class="section about-hero">
+    <div class="container about-hero__inner">
+      <div class="about-hero__text" data-reveal>
+        <p class="eyebrow">About</p>
+        <h1>Hi, I’m Hani.</h1>
+        <p class="lead">
+          I’m a software engineer and computer science student at the University of
+          Texas at Austin. My work sits at the intersection of data, accessibility,
+          and public impact.
+        </p>
+        <p>
+          Across my internships I’ve built civic housing analytics at the Child
+          Poverty Action Lab, validated logistics software serving thousands of
+          businesses at Freightcom, and shipped a mobile learning app for students
+          at Code2College. Alongside that, my accessibility work — from a web-based
+          communication platform for nonverbal users to CAD-designed keyguards — is
+          where I feel my work matters most.
+        </p>
+        <p>
+          The throughline is simple: I want to remove the barriers between people and
+          the tools meant to help them.
+        </p>
+        <div class="about-hero__actions">
+          <a class="btn btn--primary" href="/projects">See my projects</a>
+          <a class="btn btn--ghost" href={site.links.resume} target="_blank" rel="noopener">
+            Download résumé
+          </a>
+        </div>
+      </div>
+      <figure class="about-hero__photo" data-reveal style="--reveal-delay:120ms">
+        <Image
+          src={headshot}
+          alt="Portrait of Hani Merali"
+          width={520}
+          height={620}
+          widths={[300, 520, 780]}
+          sizes="(min-width: 56rem) 22rem, 70vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Experience timeline -->
+  <section class="section section--alt">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Experience</p>
+        <h2>Where I’ve worked.</h2>
+      </header>
+      <ol class="timeline">
+        {
+          experience.map((job, i) => (
+            <li class="timeline__item" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <div class="timeline__period">
+                <span>{job.period}</span>
+                {job.current && <span class="badge">Current</span>}
+              </div>
+              <div class="timeline__body">
+                <h3>
+                  {job.title} <span class="timeline__org">· {job.org}</span>
+                </h3>
+                <p class="timeline__loc">{job.location}</p>
+                <ul class="timeline__bullets">
+                  {job.bullets.map((b) => <li>{b}</li>)}
+                </ul>
+                {job.stack.length > 0 && (
+                  <ul class="chips" aria-label="Technologies used">
+                    {job.stack.map((s) => <li>{s}</li>)}
+                  </ul>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Skills + education -->
+  <section class="section">
+    <div class="container skills-grid">
+      <div data-reveal>
+        <p class="eyebrow">Toolkit</p>
+        <h2>Skills &amp; technologies.</h2>
+        <dl class="skills">
+          {
+            Object.entries(skills).map(([group, items]) => (
+              <div class="skills__group">
+                <dt>{group}</dt>
+                <dd>
+                  <ul class="chips">
+                    {items.map((s) => <li>{s}</li>)}
+                  </ul>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+      <aside class="education" data-reveal style="--reveal-delay:100ms">
+        <p class="eyebrow">Education</p>
+        <h2 class="education__school">{education.school}</h2>
+        <p class="education__degree">{education.degree}</p>
+        <p class="education__detail">
+          {education.detail} · Expected {education.graduation}
+        </p>
+        <p class="education__loc">{education.location}</p>
+        <h3 class="education__cw-head">Relevant coursework</h3>
+        <ul class="chips">
+          {education.coursework.map((c) => <li>{c}</li>)}
+        </ul>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-hero__inner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .about-hero__text h1 { font-size: var(--fs-h1); margin: 0.3rem 0 1rem; }
+  .about-hero__text p { margin-top: 1rem; max-width: 38rem; }
+  .about-hero__text .lead { color: var(--color-ink-soft); }
+  .about-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 1.8rem;
+  }
+  .about-hero__photo { margin: 0; }
+  .about-hero__photo img {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+  }
+  @media (min-width: 56rem) {
+    .about-hero__inner { grid-template-columns: 1.4fr 0.9fr; gap: var(--space-8); }
+    .about-hero__photo { position: sticky; top: 6rem; }
+  }
+
+  .section-head { max-width: 40rem; margin-bottom: var(--space-6); }
+  .section-head h2 { font-size: var(--fs-h2); margin-top: 0.4rem; }
+
+  /* Timeline */
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-6); }
+  .timeline__item {
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .timeline__item:last-child { border-bottom: 0; padding-bottom: 0; }
+  .timeline__period {
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-purple);
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+  }
+  .timeline__body h3 { font-size: var(--fs-h3); }
+  .timeline__org { color: var(--color-ink-soft); font-weight: 500; }
+  .timeline__loc { color: var(--color-ink-soft); font-size: var(--fs-small); margin-top: 0.15rem; }
+  .timeline__bullets { margin: 0.8rem 0 0; padding-left: 1.15rem; }
+  .timeline__bullets li { color: var(--color-ink); }
+  @media (min-width: 48rem) {
+    .timeline__item { grid-template-columns: 12rem 1fr; }
+  }
+
+  .chips { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .chips li {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+    color: var(--color-ink-soft);
+    border: 1px solid var(--color-border);
+  }
+  .section--alt .chips li { background: var(--color-surface); }
+
+  /* Skills + education */
+  .skills-grid { display: grid; gap: var(--space-7); }
+  .skills-grid h2 { font-size: var(--fs-h2); margin: 0.4rem 0 1.4rem; }
+  .skills { display: grid; gap: var(--space-5); margin: 0; }
+  .skills__group dt { font-weight: 650; margin-bottom: 0.2rem; }
+  .skills__group dd { margin: 0; }
+  .education {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: clamp(1.4rem, 3vw, 2rem);
+    align-self: start;
+  }
+  .education__school { font-size: var(--fs-h3); margin: 0.4rem 0 0.3rem; }
+  .education__degree { font-weight: 600; }
+  .education__detail, .education__loc { color: var(--color-ink-soft); font-size: var(--fs-small); }
+  .education__cw-head { font-size: 1rem; margin-top: 1.4rem; }
+  @media (min-width: 56rem) {
+    .skills-grid { grid-template-columns: 1.3fr 0.7fr; gap: var(--space-8); }
+  }
+</style>

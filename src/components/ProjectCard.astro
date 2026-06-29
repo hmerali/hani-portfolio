@@ -1,0 +1,89 @@
+---
+import type { Project } from '../data/projects';
+
+export interface Props {
+  project: Project;
+  index?: number;
+}
+const { project, index = 0 } = Astro.props;
+---
+
+<article class="card" data-reveal style={`--reveal-delay:${index * 90}ms`}>
+  <a class="card__link" href={`/projects/${project.slug}`} aria-labelledby={`p-${project.slug}`}>
+    <p class="card__context">{project.context}</p>
+    <h3 class="card__title" id={`p-${project.slug}`}>{project.title}</h3>
+    <p class="card__tagline">{project.tagline}</p>
+    <ul class="card__tags" aria-label="Technologies">
+      {project.tags.slice(0, 4).map((t) => <li>{t}</li>)}
+    </ul>
+    <span class="card__cta" aria-hidden="true">
+      View case study
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8h9M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+  </a>
+</article>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease),
+      border-color 0.3s var(--ease);
+    height: 100%;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--color-purple) 35%, var(--color-border));
+  }
+  .card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    height: 100%;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .card__context {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-purple);
+  }
+  .card__title { font-size: var(--fs-h3); }
+  .card__tagline { color: var(--color-ink-soft); flex-grow: 1; }
+  .card__tags {
+    list-style: none;
+    padding: 0;
+    margin: 0.4rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .card__tags li {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+    color: var(--color-ink-soft);
+  }
+  .card__cta {
+    margin-top: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 650;
+    color: var(--color-purple);
+  }
+  .card:hover .card__cta svg { transform: translateX(3px); }
+  .card__cta svg { transition: transform 0.25s var(--ease); }
+</style>

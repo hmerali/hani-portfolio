@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+
+const description =
+  'Selected projects by Hani Merali — spanning AI in medicine, accessible communication tools, and assistive hardware.';
+---
+
+<BaseLayout title="Projects" description={description}>
+  <section class="section projects-intro">
+    <div class="container" data-reveal>
+      <p class="eyebrow">Projects</p>
+      <h1>Work I’m proud of.</h1>
+      <p class="lead measure">
+        Three projects that capture how I think: ambitious where it counts,
+        grounded in real human needs, and built to be used. Each links to a full
+        case study.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="card-grid">
+        {projects.map((p, i) => <ProjectCard project={p} index={i} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .projects-intro h1 { font-size: var(--fs-h1); margin: 0.4rem 0 1rem; }
+  .projects-intro .lead { color: var(--color-ink-soft); }
+  .card-grid {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .card-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .card-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
