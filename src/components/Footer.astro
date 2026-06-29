@@ -1,0 +1,114 @@
+---
+const year = new Date().getFullYear();
+
+const socials = [
+  { href: 'mailto:hanimerali@gmail.com', label: 'Email', text: 'hanimerali@gmail.com' },
+  { href: 'https://linkedin.com/in/hmerali', label: 'LinkedIn', text: 'linkedin.com/in/hmerali' },
+  { href: 'https://github.com/hmerali', label: 'GitHub', text: 'github.com/hmerali' },
+];
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <span class="site-footer__name">Hani Merali</span>
+      <p class="site-footer__tag">
+        Building data and technology for civic and human good.
+      </p>
+    </div>
+
+    <nav class="site-footer__links" aria-label="Contact and social">
+      <ul>
+        {
+          socials.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                {...s.href.startsWith('http')
+                  ? { target: '_blank', rel: 'noopener' }
+                  : {}}
+              >
+                <span class="site-footer__link-label">{s.label}</span>
+                <span class="site-footer__link-text">{s.text}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container site-footer__base">
+    <p>&copy; {year} Hani Merali. Built with Astro.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    background: var(--color-purple-deep);
+    color: var(--color-on-dark);
+    padding-block: var(--space-7) var(--space-4);
+  }
+  .site-footer a { color: var(--color-on-dark); }
+  .site-footer a:hover { color: #fff; }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  .site-footer__name {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  .site-footer__tag {
+    margin-top: 0.5rem;
+    color: var(--color-on-dark-soft);
+    max-width: 24rem;
+  }
+  .site-footer__links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .site-footer__links a {
+    text-decoration: none;
+    display: inline-flex;
+    flex-direction: column;
+  }
+  .site-footer__link-label {
+    font-size: var(--fs-small);
+    color: var(--color-purple-bright);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .site-footer__link-text {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-on-dark) 30%, transparent);
+    text-underline-offset: 0.18em;
+  }
+  .site-footer__base {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--color-on-dark) 18%, transparent);
+    font-size: var(--fs-small);
+    color: var(--color-on-dark-soft);
+  }
+
+  @media (min-width: 40rem) {
+    .site-footer__inner {
+      grid-template-columns: 1.2fr 1fr;
+      align-items: start;
+    }
+    .site-footer__links ul {
+      grid-template-columns: repeat(3, auto);
+      justify-content: end;
+      gap: 2rem;
+    }
+  }
+</style>

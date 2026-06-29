@@ -1,0 +1,185 @@
+---
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="Hani Merali — home">
+      <span class="brand__name">Hani Merali</span>
+    </a>
+
+    <details class="nav" id="site-nav">
+      <summary class="nav__toggle" aria-label="Toggle navigation menu">
+        <span class="nav__toggle-bars" aria-hidden="true"></span>
+        <span class="nav__toggle-label">Menu</span>
+      </summary>
+      <nav class="nav__menu" aria-label="Primary">
+        <ul>
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={['nav__link', { 'is-active': isActive(link.href) }]}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a class="nav__link nav__link--cta" href="/resume.pdf" target="_blank" rel="noopener">
+              Résumé
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<!-- Close the mobile disclosure after a link is tapped (enhancement only). -->
+<script is:inline>
+  (() => {
+    const nav = document.getElementById('site-nav');
+    if (!nav) return;
+    nav.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => nav.removeAttribute('open'));
+    });
+    // Close on Escape when open.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.hasAttribute('open')) {
+        nav.removeAttribute('open');
+        nav.querySelector('summary')?.focus();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.25rem;
+  }
+  .brand {
+    text-decoration: none;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .brand:hover { color: var(--color-purple); }
+
+  /* Disclosure resets */
+  .nav { position: relative; }
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    list-style: none;
+    cursor: pointer;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border);
+    font-weight: 600;
+    color: var(--color-ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav__toggle::-webkit-details-marker { display: none; }
+  .nav__toggle-bars,
+  .nav__toggle-bars::before,
+  .nav__toggle-bars::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--color-ink);
+    border-radius: 2px;
+    transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+  }
+  .nav__toggle-bars { position: relative; }
+  .nav__toggle-bars::before { position: absolute; top: -6px; }
+  .nav__toggle-bars::after { position: absolute; top: 6px; }
+  .nav[open] .nav__toggle-bars { background: transparent; }
+  .nav[open] .nav__toggle-bars::before { transform: translateY(6px) rotate(45deg); }
+  .nav[open] .nav__toggle-bars::after { transform: translateY(-6px) rotate(-45deg); }
+
+  .nav__menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav__link {
+    display: block;
+    text-decoration: none;
+    color: var(--color-ink);
+    font-weight: 500;
+    padding: 0.5rem 0;
+  }
+  .nav__link.is-active { color: var(--color-purple); font-weight: 650; }
+  .nav__link:hover { color: var(--color-purple); }
+  .nav__link--cta {
+    color: var(--color-purple);
+    font-weight: 650;
+  }
+
+  /* Mobile: dropdown panel */
+  @media (max-width: 47.99rem) {
+    .nav__menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.6rem);
+      min-width: 12rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 0.5rem 1rem;
+    }
+    .nav__link { padding: 0.7rem 0; border-bottom: 1px solid var(--color-border); }
+    .nav__menu li:last-child .nav__link { border-bottom: 0; }
+  }
+
+  /* Desktop: inline nav, hide the toggle, always show links */
+  @media (min-width: 48rem) {
+    .nav__toggle { display: none; }
+    .nav__menu {
+      display: block !important;
+    }
+    .nav__menu ul {
+      display: flex;
+      align-items: center;
+      gap: clamp(1.25rem, 2.5vw, 2.25rem);
+    }
+    .nav__link--cta {
+      border: 1.5px solid color-mix(in srgb, var(--color-purple) 40%, transparent);
+      border-radius: 999px;
+      padding: 0.45rem 1rem;
+    }
+    .nav__link--cta:hover {
+      border-color: var(--color-purple);
+    }
+  }
+</style>
