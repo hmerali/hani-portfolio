@@ -6,9 +6,9 @@ import sitemap from '@astrojs/sitemap';
 // default. This is the single biggest lever for a perfect Lighthouse score and
 // is auto-detected by Vercel with no extra adapter config.
 export default defineConfig({
-  // Update this to the final domain when one is purchased; used for canonical
-  // URLs, sitemap, and Open Graph tags.
-  site: 'https://hani-portfolio.vercel.app',
+  // Production URL — used for canonical URLs, sitemap, and Open Graph tags.
+  // Update this if a custom domain is added later.
+  site: 'https://hani-portfolio-sigma.vercel.app',
   output: 'static',
   build: {
     // Inline all CSS into each page's <head> so there is no render-blocking
