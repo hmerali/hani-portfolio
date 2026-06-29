@@ -16,9 +16,8 @@ export default defineConfig({
     // font-display: swap. This removes the last render-blocking resource.
     inlineStylesheets: 'always',
   },
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'hover',
-  },
+  // No prefetch: it adds Astro's only client-side JS bundle, which shows up as
+  // Total Blocking Time under heavy CPU throttling. For a small single-page
+  // site the navigation benefit is marginal, so we ship zero bundled JS.
   integrations: [sitemap()],
 });
