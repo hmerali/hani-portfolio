@@ -53,6 +53,7 @@ export interface Content {
   experience: Experience[];
   contact: { eyebrow: string; heading: string; lead: string };
   footer: { tagline: string; built: string; email: string };
+  caseStudy: { back: string; prev: string; next: string; techLabel: string };
 }
 
 // Tech tags shared across locales.
@@ -283,6 +284,7 @@ const en: Content = {
     built: 'Built with Astro.',
     email: 'Email',
   },
+  caseStudy: { back: 'Back to portfolio', prev: 'Previous', next: 'Next', techLabel: 'Technologies' },
 };
 
 const es: Content = {
@@ -506,6 +508,7 @@ const es: Content = {
     built: 'Hecho con Astro.',
     email: 'Correo',
   },
+  caseStudy: { back: 'Volver al portafolio', prev: 'Anterior', next: 'Siguiente', techLabel: 'Tecnologías' },
 };
 
 export const content: Record<Lang, Content> = { en, es };

@@ -6,7 +6,8 @@ export interface Props {
   lang: Lang;
   t: Content;
 }
-const { t } = Astro.props;
+const { t, lang } = Astro.props;
+const projectBase = lang === 'es' ? '/es/projects' : '/projects';
 
 // Inline icons (no external requests).
 const icons = {
@@ -79,7 +80,7 @@ const socials = [
     <div class="pgrid">
       {t.projects.map((p, i) => (
         <article class="pcard" data-reveal style={`--reveal-delay:${i * 90}ms`}>
-          <a class="pcard__btn" href={`/projects/${p.slug}`} data-open={`dlg-${p.slug}`}
+          <a class="pcard__btn" href={`${projectBase}/${p.slug}`} data-open={`dlg-${p.slug}`}
             aria-haspopup="dialog" aria-label={`${t.projectsSection.viewDetails}: ${p.title}`}>
             <span class="pcard__context">{p.context}</span>
             <span class="pcard__title">{p.title}</span>

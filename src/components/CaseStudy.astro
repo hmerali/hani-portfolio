@@ -1,0 +1,132 @@
+---
+import type { Content, Project, Lang } from '../i18n/content';
+
+export interface Props {
+  project: Project;
+  prev: Project | null;
+  next: Project | null;
+  lang: Lang;
+  t: Content;
+}
+const { project, prev, next, t, lang } = Astro.props;
+const base = lang === 'es' ? '/es/projects' : '/projects';
+const home = lang === 'es' ? '/es/#projects' : '/#projects';
+---
+
+<article>
+  <header class="case-hero">
+    <div class="container case-hero__inner">
+      <a class="back-link" href={home}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M13 8H4M8 4 4 8l4 4" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {t.caseStudy.back}
+      </a>
+      <p class="eyebrow case-hero__context">{project.context}</p>
+      <h1 class="case-hero__title">{project.title}</h1>
+      <p class="lead case-hero__tagline">{project.tagline}</p>
+      <ul class="chips case-hero__tags" aria-label={t.caseStudy.techLabel}>
+        {project.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+    </div>
+  </header>
+
+  <div class="section">
+    <div class="container case-body">
+      {
+        project.sections.map((section, i) => (
+          <section class="case-section" data-reveal style={`--reveal-delay:${i * 60}ms`}>
+            <h2>{section.heading}</h2>
+            {section.body.map((p) => <p>{p}</p>)}
+            {section.bullets && (
+              <ul class="case-bullets">
+                {section.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            )}
+          </section>
+        ))
+      }
+    </div>
+  </div>
+
+  <nav class="case-nav" aria-label="More projects">
+    <div class="container case-nav__inner">
+      {
+        prev ? (
+          <a class="case-nav__link case-nav__link--prev" href={`${base}/${prev.slug}`}>
+            <span class="case-nav__dir">← {t.caseStudy.prev}</span>
+            <span class="case-nav__name">{prev.title}</span>
+          </a>
+        ) : <span />
+      }
+      {
+        next && (
+          <a class="case-nav__link case-nav__link--next" href={`${base}/${next.slug}`}>
+            <span class="case-nav__dir">{t.caseStudy.next} →</span>
+            <span class="case-nav__name">{next.title}</span>
+          </a>
+        )
+      }
+    </div>
+  </nav>
+</article>
+
+<style>
+  .case-hero {
+    background:
+      radial-gradient(120% 120% at 100% 0%, #4a2570 0%, transparent 55%),
+      linear-gradient(160deg, #38205c 0%, #25143b 100%);
+    color: var(--color-on-dark);
+    padding-block: clamp(2.5rem, 8vh, 5rem);
+  }
+  .case-hero__inner { max-width: 48rem; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-purple-bright);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--fs-small);
+    margin-bottom: 1.5rem;
+  }
+  .back-link:hover { color: #fff; }
+  .case-hero__context { color: var(--color-purple-bright); }
+  .case-hero__title { color: var(--color-on-dark); font-size: var(--fs-h1); margin: 0.5rem 0 1rem; }
+  .case-hero__tagline { color: var(--color-on-dark-soft); }
+  .case-hero__tags { margin-top: 1.5rem; }
+  .case-hero__tags li {
+    background: color-mix(in srgb, var(--color-on-dark) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-on-dark) 22%, transparent);
+    color: var(--color-on-dark);
+  }
+
+  .case-body { max-width: 44rem; }
+  .case-section { margin-bottom: var(--space-7); }
+  .case-section:last-child { margin-bottom: 0; }
+  .case-section h2 {
+    font-size: var(--fs-h3);
+    color: var(--color-purple);
+    margin-bottom: 0.8rem;
+  }
+  .case-section p { margin-top: 0.9rem; }
+  .case-section p:first-of-type { margin-top: 0; }
+  .case-bullets { margin: 1.1rem 0 0; padding-left: 1.2rem; }
+  .case-bullets li { margin-block: 0.5rem; }
+
+  .case-nav { border-top: 1px solid var(--color-border); padding-block: var(--space-6); }
+  .case-nav__inner { display: flex; justify-content: space-between; gap: 1rem; }
+  .case-nav__link {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-decoration: none;
+    color: var(--color-ink);
+    max-width: 48%;
+  }
+  .case-nav__link--next { text-align: right; margin-left: auto; }
+  .case-nav__dir { font-size: var(--fs-small); color: var(--color-purple); font-weight: 600; }
+  .case-nav__name { font-family: var(--font-serif); font-size: 1.15rem; }
+  .case-nav__link:hover .case-nav__name { color: var(--color-purple); }
+</style>

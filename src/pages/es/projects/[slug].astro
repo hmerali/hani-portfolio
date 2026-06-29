@@ -1,12 +1,13 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import CaseStudy from '../../components/CaseStudy.astro';
-import { getContent } from '../../i18n/content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CaseStudy from '../../../components/CaseStudy.astro';
+import { getContent } from '../../../i18n/content';
 
-const lang = 'en';
+const lang = 'es';
 const t = getContent(lang);
 
 export function getStaticPaths() {
+  // Slugs are shared across locales; iterate the canonical (en) list.
   const all = getContent('en').projects;
   return all.map((project, index) => ({
     params: { slug: project.slug },
@@ -24,7 +25,7 @@ const next = index < t.projects.length - 1 ? t.projects[index + 1] : null;
   title={project.title}
   description={project.summary}
   lang={lang}
-  altHref={`/es/projects/${project.slug}`}
+  altHref={`/projects/${project.slug}`}
 >
   <CaseStudy project={project} prev={prev} next={next} lang={lang} t={t} />
 </BaseLayout>
