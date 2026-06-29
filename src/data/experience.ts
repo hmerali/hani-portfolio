@@ -51,6 +51,7 @@ export const experience: Experience[] = [
   {
     org: 'The University of Texas at Arlington — IDIR Lab',
     title: 'Artificial Intelligence Research Intern',
+    period: 'Jun — Aug 2025',
     location: 'Arlington, TX',
     stack: ['GPT-4o mini', 'Prompt Engineering', 'Fitbit Data'],
     description:
@@ -59,6 +60,7 @@ export const experience: Experience[] = [
   {
     org: 'UT Health Science Center at San Antonio',
     title: 'Artificial Intelligence Research Volunteer',
+    period: 'Sep 2025 — Jun 2026',
     location: 'San Antonio, TX',
     stack: ['Machine Learning', 'Data Pipelines', 'Multimodal Data'],
     description:
