@@ -28,11 +28,6 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
             <a href={link.href} class="navpill" data-nav={link.id}>{link.label}</a>
           </li>
         ))}
-        <li>
-          <a class="navpill navpill--cta" href="/resume.pdf" target="_blank" rel="noopener">
-            {t.nav.resume}
-          </a>
-        </li>
       </ul>
     </nav>
 
@@ -157,11 +152,6 @@ const langAriaLabel = lang === 'es' ? t.toggles.toEn : t.toggles.toEs;
     color: var(--color-purple);
     background: color-mix(in srgb, var(--color-purple) 14%, transparent);
   }
-  .navpill--cta {
-    color: var(--color-purple);
-    border-color: color-mix(in srgb, var(--color-purple) 40%, transparent);
-  }
-  .navpill--cta:hover { border-color: var(--color-purple); background: transparent; }
 
   .header-tools { display: flex; align-items: center; gap: 0.4rem; }
   .tool-btn {
