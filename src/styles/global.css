@@ -161,6 +161,9 @@ strong { font-weight: 650; }
 .section--tight { padding-block: var(--space-7); }
 .section--alt { background: var(--color-bg-alt); }
 
+/* Offset anchored sections so the sticky header never overlaps their heading. */
+:where(section[id]) { scroll-margin-top: 5.5rem; }
+
 .measure { max-width: var(--measure); }
 
 .eyebrow {

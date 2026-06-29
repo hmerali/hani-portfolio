@@ -1,20 +1,17 @@
 ---
-const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-
+// Single-page anchor nav. Links use absolute /#id so they also work from the
+// project case-study pages (jump back to home, then scroll).
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/#about', label: 'About', id: 'about' },
+  { href: '/#projects', label: 'Projects', id: 'projects' },
+  { href: '/#experience', label: 'Experience', id: 'experience' },
+  { href: '/#contact', label: 'Contact', id: 'contact' },
 ];
-
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
 ---
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href="/" aria-label="Hani Merali — home">
+    <a class="brand" href="/#home" aria-label="Hani Merali — top of page">
       <span class="brand__name">Hani Merali</span>
     </a>
 
@@ -28,11 +25,7 @@ const isActive = (href: string) =>
           {
             links.map((link) => (
               <li>
-                <a
-                  href={link.href}
-                  class:list={['nav__link', { 'is-active': isActive(link.href) }]}
-                  aria-current={isActive(link.href) ? 'page' : undefined}
-                >
+                <a href={link.href} class="nav__link" data-nav={link.id}>
                   {link.label}
                 </a>
               </li>
@@ -49,21 +42,48 @@ const isActive = (href: string) =>
   </div>
 </header>
 
-<!-- Close the mobile disclosure after a link is tapped (enhancement only). -->
 <script is:inline>
   (() => {
     const nav = document.getElementById('site-nav');
-    if (!nav) return;
-    nav.querySelectorAll('a').forEach((a) => {
-      a.addEventListener('click', () => nav.removeAttribute('open'));
-    });
-    // Close on Escape when open.
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && nav.hasAttribute('open')) {
-        nav.removeAttribute('open');
-        nav.querySelector('summary')?.focus();
-      }
-    });
+    if (nav) {
+      nav.querySelectorAll('a').forEach((a) =>
+        a.addEventListener('click', () => nav.removeAttribute('open'))
+      );
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && nav.hasAttribute('open')) {
+          nav.removeAttribute('open');
+          nav.querySelector('summary')?.focus();
+        }
+      });
+    }
+
+    // Highlight the nav link for the section currently in view.
+    const navLinks = document.querySelectorAll('.nav__link[data-nav]');
+    const byId = {};
+    navLinks.forEach((l) => (byId[l.getAttribute('data-nav')] = l));
+    const sections = ['about', 'projects', 'experience', 'contact']
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+    if ('IntersectionObserver' in window && sections.length) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const link = byId[entry.target.id];
+            if (!link) return;
+            if (entry.isIntersecting) {
+              navLinks.forEach((l) => {
+                l.classList.remove('is-active');
+                l.removeAttribute('aria-current');
+              });
+              link.classList.add('is-active');
+              link.setAttribute('aria-current', 'true');
+            }
+          });
+        },
+        { rootMargin: '-45% 0px -50% 0px' }
+      );
+      sections.forEach((s) => io.observe(s));
+    }
   })();
 </script>
 
@@ -92,7 +112,6 @@ const isActive = (href: string) =>
   }
   .brand:hover { color: var(--color-purple); }
 
-  /* Disclosure resets */
   .nav { position: relative; }
   .nav__toggle {
     display: inline-flex;
@@ -126,11 +145,7 @@ const isActive = (href: string) =>
   .nav[open] .nav__toggle-bars::before { transform: translateY(6px) rotate(45deg); }
   .nav[open] .nav__toggle-bars::after { transform: translateY(-6px) rotate(-45deg); }
 
-  .nav__menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+  .nav__menu ul { list-style: none; margin: 0; padding: 0; }
   .nav__link {
     display: block;
     text-decoration: none;
@@ -140,12 +155,8 @@ const isActive = (href: string) =>
   }
   .nav__link.is-active { color: var(--color-purple); font-weight: 650; }
   .nav__link:hover { color: var(--color-purple); }
-  .nav__link--cta {
-    color: var(--color-purple);
-    font-weight: 650;
-  }
+  .nav__link--cta { color: var(--color-purple); font-weight: 650; }
 
-  /* Mobile: dropdown panel */
   @media (max-width: 47.99rem) {
     .nav__menu {
       position: absolute;
@@ -162,12 +173,9 @@ const isActive = (href: string) =>
     .nav__menu li:last-child .nav__link { border-bottom: 0; }
   }
 
-  /* Desktop: inline nav, hide the toggle, always show links */
   @media (min-width: 48rem) {
     .nav__toggle { display: none; }
-    .nav__menu {
-      display: block !important;
-    }
+    .nav__menu { display: block !important; }
     .nav__menu ul {
       display: flex;
       align-items: center;
@@ -178,8 +186,6 @@ const isActive = (href: string) =>
       border-radius: 999px;
       padding: 0.45rem 1rem;
     }
-    .nav__link--cta:hover {
-      border-color: var(--color-purple);
-    }
+    .nav__link--cta:hover { border-color: var(--color-purple); }
   }
 </style>
